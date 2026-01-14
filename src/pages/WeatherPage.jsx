@@ -1,6 +1,6 @@
 import SearchForm from "../components/SearchForm";
 import WeatherResult from "../components/WeatherResult";
-import { useState, useCallback, useMemo, useRef, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { useWeather } from "../hooks/useWeather";
 import { useCity } from "../hooks/useCity";
 
@@ -12,27 +12,15 @@ const WeatherPage = () => {
     const [targetLocation, setTargetLocation] = useState(null);
 
     const { refetch: searchCity, isFetching: isCityLoading, error: cityError } = useCity(city);
-    const searchCityRef = useRef(searchCity);
-    
-    useEffect(() => {
-        searchCityRef.current = searchCity;
-    }, [searchCity]);
 
     const { data: weatherData, isLoading: isWeatherLoading, error: weatherError } = useWeather(targetLocation?.lat, targetLocation?.lng);
 
-    const handleCityChange = useCallback((e) => {
-        setCity(e.target.value);
-    }, []);
-
-    const handleCoordinateChange = useCallback((field) => (e) => {
-        setCoordinates(prev => ({ ...prev, [field]: e.target.value }));
-    }, []);
 
     const handleSearch = useCallback(async () => {
         console.error("handleSearch called with mode:", mode);
         if (mode === 'city') {
             try {
-                const { data: cityData } = await searchCityRef.current();
+                const { data: cityData } = await searchCity();
                 console.log("City data received:", cityData);
                 if (cityData?.results && cityData.results.length > 0) {
                     const { latitude, longitude } = cityData.results[0];
@@ -55,7 +43,7 @@ const WeatherPage = () => {
                 return currentCoords;
             });
         }
-    }, [mode]);
+    }, [mode, searchCity]);
     // console.log("Weather data:", weatherData);
     // console.log("Target location:", targetLocation);
     const isLoading = isCityLoading || isWeatherLoading;
@@ -68,9 +56,9 @@ const WeatherPage = () => {
                 mode={mode}
                 setMode={setMode}
                 city={city}
-                setCity={handleCityChange}
+                setCity={setCity}
                 coordinates={coordinates}
-                setCoordinates={handleCoordinateChange}
+                setCoordinates={setCoordinates}
                 onSearch={handleSearch}
                 loading={isLoading}
             />
