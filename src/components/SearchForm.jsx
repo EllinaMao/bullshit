@@ -16,7 +16,7 @@ const SearchForm = React.memo(({
     onSearch,
     loading
 }) => {
-    console.error("Rendering SearchForm component");
+    console.log("Rendering SearchForm component");
 
     return (
         <div>
@@ -51,7 +51,6 @@ const SearchForm = React.memo(({
                 {'Search'}
             </button>
             <p>{loading ? 'Loading...' : ''}</p>
-            {/**ill make later anounser from portals */}
         </div>
 
     );

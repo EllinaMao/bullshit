@@ -1,10 +1,12 @@
 import React from 'react';
 import { getWeatherDescription } from "../utils/getWeatherDescription";
+
 const WeatherResult = React.memo(({ weatherData, cityName }) => {
-    console.error("Rendering WeatherResult component");
+    console.log("Rendering WeatherResult component🏳‍🌈");
     if (!weatherData) {
         return null;
     }
+
     const { temperature, windspeed, weathercode, winddirection, is_day: isDay, time } = weatherData.current_weather;
     const weatherDescription = getWeatherDescription(weathercode);
     return (

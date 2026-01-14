@@ -1,6 +1,6 @@
 import SearchForm from "../components/SearchForm";
 import WeatherResult from "../components/WeatherResult";
-import { useState, useCallback } from "react";
+import { useState, useCallback, use } from "react";
 import { useWeather } from "../hooks/useWeather";
 import { useCity } from "../hooks/useCity";
 
@@ -17,14 +17,13 @@ const WeatherPage = () => {
 
 
     const handleSearch = useCallback(async () => {
-        console.error("handleSearch called with mode:", mode);
         if (mode === 'city') {
             try {
                 const { data: cityData } = await searchCity();
                 console.log("City data received:", cityData);
                 if (cityData?.results && cityData.results.length > 0) {
                     const { latitude, longitude } = cityData.results[0];
-                    // console.log("Setting target location:", { latitude, longitude });
+                    console.log("Setting target location:", { latitude, longitude });
                     setTargetLocation({ lat: parseFloat(latitude), lng: parseFloat(longitude) });
                     setCoordinates({ latitude, longitude});
                 } else {
@@ -36,18 +35,20 @@ const WeatherPage = () => {
             }
 
         } else {
-            setCoordinates(currentCoords => {
-                const { latitude, longitude } = currentCoords;
-                console.log("Setting coordinates:", { latitude, longitude });
-                setTargetLocation({ lat: parseFloat(latitude), lng: parseFloat(longitude) });
-                return currentCoords;
-            });
+            const { latitude, longitude } = coordinates;
+            console.log("Setting coordinates:", { latitude, longitude });
+            setTargetLocation({ lat: parseFloat(latitude), lng: parseFloat(longitude) });
         }
-    }, [mode, searchCity]);
+    }, [mode, searchCity, coordinates]);
     // console.log("Weather data:", weatherData);
     // console.log("Target location:", targetLocation);
     const isLoading = isCityLoading || isWeatherLoading;
     const error = cityError || weatherError;
+
+    const coordinateHandlers = useCallback({
+        latitude: (value) => setCoordinates(prev => ({ ...prev, latitude: value })),
+        longitude: (value) => setCoordinates(prev => ({ ...prev, longitude: value }))
+    }, [coordinates]);
 
     return (
         <div>
@@ -58,7 +59,7 @@ const WeatherPage = () => {
                 city={city}
                 setCity={setCity}
                 coordinates={coordinates}
-                setCoordinates={setCoordinates}
+                coordinateHandlers={coordinateHandlers}
                 onSearch={handleSearch}
                 loading={isLoading}
             />

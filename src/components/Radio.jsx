@@ -1,4 +1,6 @@
-const Radio = ({ options, currentValue, onChange }) => {
+import React from "react";
+const Radio = React.memo(({ options, currentValue, onChange }) => {
+    console.log("Rendering Radio 🚨");
     return (
         <div>
             {options.map((option) => (
@@ -14,5 +16,5 @@ const Radio = ({ options, currentValue, onChange }) => {
             ))}
         </div>
     );
-}
+});
 export default Radio;
