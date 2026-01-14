@@ -12,7 +12,7 @@ const useCity = (city, count = 1, language = 'en') => {
             language: language,
             format: 'json',
         }),
-        enabled: !!city && city.length > 0,
+        enabled: false,
         staleTime: 1000 * 60 * 5, 
         
         retry: 1, 

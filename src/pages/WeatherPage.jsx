@@ -7,17 +7,14 @@ import { useCity } from "../hooks/useCity";
 const WeatherPage = () => {
     const [mode, setMode] = useState('city');
     const [city, setCity] = useState('');
-
     const [coordinates, setCoordinates] = useState({ latitude: '', longitude: '' });
     const [targetLocation, setTargetLocation] = useState(null);
-
     const { refetch: searchCity, isFetching: isCityLoading, error: cityError } = useCity(city);
-
     const { data: weatherData, isLoading: isWeatherLoading, error: weatherError } = useWeather(targetLocation?.lat, targetLocation?.lng);
 
 
     const handleSearch = useCallback(async () => {
-        if (mode === 'city') {
+        if (mode === 'city') {  
             try {
                 const { data: cityData } = await searchCity();
                 console.log("City data received:", cityData);
@@ -25,7 +22,7 @@ const WeatherPage = () => {
                     const { latitude, longitude } = cityData.results[0];
                     console.log("Setting target location:", { latitude, longitude });
                     setTargetLocation({ lat: parseFloat(latitude), lng: parseFloat(longitude) });
-                    setCoordinates({ latitude, longitude});
+                    setCoordinates({ latitude, longitude });
                 } else {
                     console.log("No city data found");
                 }
@@ -72,7 +69,7 @@ const WeatherPage = () => {
             </div> */}
 
             {error && <p style={{ color: 'red' }}>Error: {error.message}</p>}
-            <WeatherResult weatherData={weatherData} cityName={city} />
+            <WeatherResult weatherData={weatherData} />
         </div>
     );
 };
