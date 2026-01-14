@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+    import { useQuery } from "@tanstack/react-query";
 import { fetchData } from "../utils/fetchData";
 import { BASE_WEATHER } from "../API/API";
 
@@ -8,7 +8,7 @@ const useWeather = (latitude, longitude) => {
         queryFn: () => fetchData(BASE_WEATHER, 'forecast', {
             latitude: latitude,
             longitude: longitude,
-            currentWeather: true,
+            current_weather: true,
         }),
         enabled: latitude != null && longitude != null,
     });

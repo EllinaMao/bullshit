@@ -1,3 +1,4 @@
+import React from 'react';
 import FormInput from "./FormInput";
 import Radio from "./Radio";
 
@@ -5,17 +6,18 @@ const SEARCH_OPTIONS = [
     { label: 'By City', value: 'city' },
     { label: 'By Coordinates', value: 'coordinates' },
 ];
-
-const SearchForm = ({
+const SearchForm = React.memo(({
     mode,
     setMode,
     city,
     setCity,
     coordinates,
-    setCoordinates,
+    coordinateHandlers,
     onSearch,
     loading
 }) => {
+    console.error("Rendering SearchForm component");
+
     return (
         <div>
             <Radio options={SEARCH_OPTIONS} currentValue={mode} onChange={setMode}></Radio>
@@ -23,7 +25,7 @@ const SearchForm = ({
                 <FormInput
                     type="text"
                     value={city}
-                    onChange={(e) => setCity(e.target.value)}
+                    onChange={setCity}
                     placeholder="Enter city name"
                     required
                 />
@@ -32,14 +34,14 @@ const SearchForm = ({
                     <FormInput
                         type="number"
                         value={coordinates.latitude}
-                        onChange={(e) => setCoordinates({ ...coordinates, latitude: e.target.value })}
+                        onChange={coordinateHandlers.latitude}
                         placeholder="Enter latitude"
                         required
                     />
                     <FormInput
                         type="number"
                         value={coordinates.longitude}
-                        onChange={(e) => setCoordinates({ ...coordinates, longitude: e.target.value })}
+                        onChange={coordinateHandlers.longitude}
                         placeholder="Enter longitude"
                         required
                     />
@@ -53,6 +55,6 @@ const SearchForm = ({
         </div>
 
     );
-};
+});
 
 export default SearchForm;

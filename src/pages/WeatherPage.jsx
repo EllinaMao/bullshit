@@ -1,6 +1,6 @@
 import SearchForm from "../components/SearchForm";
 import WeatherResult from "../components/WeatherResult";
-import { useState, useRef, useEffect } from "react";
+import { useState, useCallback, useMemo, useRef, useEffect } from "react";
 import { useWeather } from "../hooks/useWeather";
 import { useCity } from "../hooks/useCity";
 
@@ -12,17 +12,35 @@ const WeatherPage = () => {
     const [targetLocation, setTargetLocation] = useState(null);
 
     const { refetch: searchCity, isFetching: isCityLoading, error: cityError } = useCity(city);
+    const searchCityRef = useRef(searchCity);
+    
+    useEffect(() => {
+        searchCityRef.current = searchCity;
+    }, [searchCity]);
 
     const { data: weatherData, isLoading: isWeatherLoading, error: weatherError } = useWeather(targetLocation?.lat, targetLocation?.lng);
 
+    const handleCityChange = useCallback((e) => {
+        setCity(e.target.value);
+    }, []);
 
-    const handleSearch = async () => {
+    const handleCoordinateChange = useCallback((field) => (e) => {
+        setCoordinates(prev => ({ ...prev, [field]: e.target.value }));
+    }, []);
+
+    const handleSearch = useCallback(async () => {
+        console.error("handleSearch called with mode:", mode);
         if (mode === 'city') {
             try {
-                const {data: cityData} = await searchCity();
-                if (cityData && cityData.length > 0) {
-                    const { lat, lon } = cityData[0];
-                    setTargetLocation({ lat: parseFloat(lat), lng: parseFloat(lon) });
+                const { data: cityData } = await searchCityRef.current();
+                console.log("City data received:", cityData);
+                if (cityData?.results && cityData.results.length > 0) {
+                    const { latitude, longitude } = cityData.results[0];
+                    // console.log("Setting target location:", { latitude, longitude });
+                    setTargetLocation({ lat: parseFloat(latitude), lng: parseFloat(longitude) });
+                    setCoordinates({ latitude, longitude});
+                } else {
+                    console.log("No city data found");
                 }
             }
             catch (error) {
@@ -30,15 +48,19 @@ const WeatherPage = () => {
             }
 
         } else {
-            const { latitude, longitude } = coordinates;
-            setTargetLocation({ lat: parseFloat(latitude), lng: parseFloat(longitude) });
+            setCoordinates(currentCoords => {
+                const { latitude, longitude } = currentCoords;
+                console.log("Setting coordinates:", { latitude, longitude });
+                setTargetLocation({ lat: parseFloat(latitude), lng: parseFloat(longitude) });
+                return currentCoords;
+            });
         }
-    };
-    console.log("Weather data:", weatherData);
-    console.log("Target location:", targetLocation);
+    }, [mode]);
+    // console.log("Weather data:", weatherData);
+    // console.log("Target location:", targetLocation);
     const isLoading = isCityLoading || isWeatherLoading;
     const error = cityError || weatherError;
-    
+
     return (
         <div>
             <h1>Weather App</h1>
@@ -46,14 +68,22 @@ const WeatherPage = () => {
                 mode={mode}
                 setMode={setMode}
                 city={city}
-                setCity={setCity}
+                setCity={handleCityChange}
                 coordinates={coordinates}
-                setCoordinates={setCoordinates}
+                setCoordinates={handleCoordinateChange}
                 onSearch={handleSearch}
                 loading={isLoading}
             />
+            {/**debug info */}
+            {/* <div>{mode}
+                {mode === 'city' ? ` - City: ${city}` : ` - Coordinates: ${coordinates.latitude}, ${coordinates.longitude}`}
+                {isLoading && <span> Loading...</span>}
+                {targetLocation && ` - Target Location: ${targetLocation.lat}, ${targetLocation.lng}`}
+                {weatherData && ` - Weather fetched`}
+            </div> */}
+
             {error && <p style={{ color: 'red' }}>Error: {error.message}</p>}
-            <WeatherResult weatherData={weatherData} />
+            <WeatherResult weatherData={weatherData} cityName={city} />
         </div>
     );
 };
