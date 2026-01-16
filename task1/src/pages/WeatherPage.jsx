@@ -1,51 +1,31 @@
-import { useState, useCallback } from "react";
+import { useContext } from "react";
 import SearchForm from "../components/SearchForm";
 import WeatherResult from "../components/WeatherResult";
 import { useWeather } from "../hooks/useWeather";
-import Collapse from 'react-bootstrap/Collapse';
+import Collapse from "react-bootstrap/Collapse";
+import { WeatherContext } from "../context/WeatherContext.jsx";
 
 const WeatherPage = () => {
-    const [targetLocation, setTargetLocation] = useState(null);
-    const [displayName, setDisplayName] = useState('');
-    const [isResultVisible, setIsResultVisible] = useState(false);
+  const { location, isResultVisible } = useContext(WeatherContext);
 
-    const {
-        data: weatherData,
-        isLoading: isWeatherLoading,
-        error: weatherError
-    } = useWeather(targetLocation?.lat, targetLocation?.lng);
+  const {
+    data: weatherData,
+    isLoading: isWeatherLoading,
+    error: weatherError,
+  } = useWeather(location?.lat, location?.lng);
 
-    const handleLocationFound = useCallback((locationData) => {
-        setTargetLocation({ lat: locationData.lat, lng: locationData.lng });
-        setDisplayName(locationData.name || 'Selected Location');
-        setIsResultVisible(true);
-    }, []);
+  return (
+    <div className="container mt-5">
+      <h1 className="text-center">Weather App</h1>
+      <SearchForm loading={isWeatherLoading} />
 
-    const handleInputChange = useCallback(() => {
-        setIsResultVisible(false);
-    }, []);
-
-    return (
-        <div className="container mt-5">
-            <h1 className="text-center">Weather App</h1>
-            <SearchForm
-                onLocationFound={handleLocationFound}
-                onInputChange={handleInputChange}
-                loading={isWeatherLoading}
-            />
-
-            {weatherError && <p style={{ color: 'red' }}>Error: {weatherError.message}</p>}
-
-            <Collapse in={isResultVisible}>
-                <div className="mt-4">
-                    <WeatherResult
-                        weatherData={weatherData}
-                        cityName={displayName}
-                    />
-                </div>
-            </Collapse>
+      <Collapse in={isResultVisible}>
+        <div className="mt-4">
+          <WeatherResult weatherData={weatherData} cityName={location?.name} />
         </div>
-    );
+      </Collapse>
+    </div>
+  );
 };
 
 export default WeatherPage;
