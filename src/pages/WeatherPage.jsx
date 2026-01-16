@@ -1,6 +1,6 @@
 import SearchForm from "../components/SearchForm";
 import WeatherResult from "../components/WeatherResult";
-import { useState, useCallback, use } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useWeather } from "../hooks/useWeather";
 import { useCity } from "../hooks/useCity";
 
@@ -9,34 +9,34 @@ const WeatherPage = () => {
     const [city, setCity] = useState('');
     const [coordinates, setCoordinates] = useState({ latitude: '', longitude: '' });
     const [targetLocation, setTargetLocation] = useState(null);
-    const { refetch: searchCity, isFetching: isCityLoading, error: cityError } = useCity(city);
+    const { data: cityData, isFetching: isCityLoading, error: cityError } = useCity(city);
     const { data: weatherData, isLoading: isWeatherLoading, error: weatherError } = useWeather(targetLocation?.lat, targetLocation?.lng);
 
+    useEffect(() => {
+        if (cityData && cityData.results && cityData.results.length > 0) {
+            const { latitude, longitude } = cityData.results[0];
+            setTargetLocation({ lat: latitude, lng: longitude });
+        }
+    }, [cityData]);
 
-    const handleSearch = useCallback(async () => {
-        if (mode === 'city') {  
-            try {
-                const { data: cityData } = await searchCity();
-                console.log("City data received:", cityData);
-                if (cityData?.results && cityData.results.length > 0) {
-                    const { latitude, longitude } = cityData.results[0];
-                    console.log("Setting target location:", { latitude, longitude });
-                    setTargetLocation({ lat: parseFloat(latitude), lng: parseFloat(longitude) });
-                    setCoordinates({ latitude, longitude });
-                } else {
-                    console.log("No city data found");
-                }
-            }
-            catch (error) {
-                console.error("Error fetching city data:", error);
-            }
+    useEffect(() => {
+        if (mode === 'coordinates' && coordinates.latitude && coordinates.longitude) {
+            setTargetLocation({ lat: parseFloat(coordinates.latitude), lng: parseFloat(coordinates.longitude) });
+        }
+    }, [mode, coordinates]);
+
+
+    const handleSearch = useCallback(async (searchValue) => {
+        if (mode === 'city') {
+            setCity(searchValue);
 
         } else {
-            const { latitude, longitude } = coordinates;
-            console.log("Setting coordinates:", { latitude, longitude });
-            setTargetLocation({ lat: parseFloat(latitude), lng: parseFloat(longitude) });
+            setCoordinates({
+                latitude: searchValue.latitude,
+                longitude: searchValue.longitude
+            });
         }
-    }, [mode, searchCity, coordinates]);
+    }, [mode]);
     // console.log("Weather data:", weatherData);
     // console.log("Target location:", targetLocation);
     const isLoading = isCityLoading || isWeatherLoading;
@@ -69,7 +69,7 @@ const WeatherPage = () => {
             </div> */}
 
             {error && <p style={{ color: 'red' }}>Error: {error.message}</p>}
-            <WeatherResult weatherData={weatherData} />
+            <WeatherResult weatherData={weatherData} cityName={city} />
         </div>
     );
 };

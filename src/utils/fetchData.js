@@ -4,7 +4,6 @@ const fetchData = async (baseUrl, path, params) => {
 
     const res = await fetch(url.toString());
     console.log(res.status);
-    //to think
     if (!res.ok) {
         throw new Error("Network response was not ok");
     }

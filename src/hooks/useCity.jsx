@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchData } from "../utils/fetchData";
 
 const useCity = (city, count = 1, language = 'en') => {
-    const res  = useQuery({
+    const res = useQuery({
         queryKey: ['city', city, count, language],
 
         queryFn: () => fetchData(BASE_GEO, 'search', {
@@ -12,10 +12,10 @@ const useCity = (city, count = 1, language = 'en') => {
             language: language,
             format: 'json',
         }),
-        enabled: false,
-        staleTime: 1000 * 60 * 5, 
-        
-        retry: 1, 
+        enabled: city != null && city.trim() !== '',
+        staleTime: 1000 * 60 * 5,
+
+        retry: 1,
     });
     return res;
 };

@@ -9,15 +9,12 @@ const SEARCH_OPTIONS = [
 const SearchForm = React.memo(({
     mode,
     setMode,
-    city,
-    setCity,
-    coordinates,
-    coordinateHandlers,
     onSearch,
     loading
 }) => {
-    console.log("Rendering SearchForm component");
-
+    // console.log("Rendering SearchForm component");
+    const [city, setCity] = React.useState('');
+    const [coordinates, setCoordinates] = React.useState({ latitude: '', longitude: '' });
     return (
         <div>
             <Radio options={SEARCH_OPTIONS} currentValue={mode} onChange={setMode}></Radio>
@@ -34,21 +31,21 @@ const SearchForm = React.memo(({
                     <FormInput
                         type="number"
                         value={coordinates.latitude}
-                        onChange={coordinateHandlers.latitude}
+                        onChange={setCoordinates}
                         placeholder="Enter latitude"
                         required
                     />
                     <FormInput
                         type="number"
                         value={coordinates.longitude}
-                        onChange={coordinateHandlers.longitude}
+                        onChange={setCoordinates}
                         placeholder="Enter longitude"
                         required
                     />
                 </>
             )}
-            <button onClick={onSearch} disabled={loading}>
-                {'Search'}
+            <button onClick={() => mode === 'city' ? onSearch(city) : onSearch(coordinates)} disabled={loading}>
+                Search
             </button>
             <p>{loading ? 'Loading...' : ''}</p>
         </div>

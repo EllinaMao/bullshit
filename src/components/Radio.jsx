@@ -1,6 +1,6 @@
 import React from "react";
 const Radio = React.memo(({ options, currentValue, onChange }) => {
-    console.log("Rendering Radio 🚨");
+    // console.log("Rendering Radio 🚨");
     return (
         <div>
             {options.map((option) => (
