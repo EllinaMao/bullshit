@@ -1,7 +1,15 @@
-import { useState, useEffect } from "react";
-import { Card, Button, ListGroup, Row, Col } from "react-bootstrap";
-import { ModalWindow } from "./ModalWindow";
-import FormInput from "./FormInput";
+import { useState } from "react";
+import { Row, Col } from "react-bootstrap";
+import { UserCard } from "./UserCard";
+import { EditUserModal } from "./EditUserModal";
+
+const FIELD_CONFIG = {
+  username: { label: "Username", type: "text" },
+  email:    { label: "Email",    type: "email" },
+  gender:   { label: "Gender",   type: "text" },
+  age:      { label: "Age",      type: "number" },
+};
+
 
 const UserProfile = () => {
   const [user, setUser] = useState({
@@ -11,111 +19,52 @@ const UserProfile = () => {
     age: 25,
   });
 
-  const [showModal, setShowModal] = useState(false);
-  const [editForm, setEditForm] = useState(user);
+  const [editingField, setEditingField] = useState(null);
 
-  const handleOpen = () => {
-    setEditForm(user);
-    setShowModal(true);
-  };
-
-  const handleChange = (field, value) => {
-    setEditForm((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
-
-  const handleSave = () => {
-    if (!editForm.username.trim()) {
+  const handleSave = (field, value) => {
+    if (field === "username" && !String(value).trim()) {
       alert("Name can`t be empty!");
       return;
     }
-    if (!editForm.email.includes("@")) {
+    if (field === "email" && !String(value).includes("@")) {
       alert("Please enter a valid Email");
       return;
     }
-    if (editForm.age < 0 || editForm.age > 100) {
+    if (field === "age" && (Number(value) < 0 || Number(value) > 100)) {
       alert("Invalid age");
       return;
     }
+    if (field === "gender" && !String(value).trim()) {
+       alert("Gender can`t be empty!");
+       return;
+    }
 
-    setUser(editForm);
-    setShowModal(false);
+    
+    setUser((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+    setEditingField(null); 
   };
 
   return (
     <div className="container mt-5">
       <Row className="justify-content-md-center">
         <Col md={6}>
-          <Card>
-            <Card.Header as="h5">User Profile</Card.Header>
-            <Card.Body>
-              <Card.Title>Username: {user.username}</Card.Title>
-              <ListGroup variant="flush" className="mb-3">
-                <ListGroup.Item>
-                  <strong>Email:</strong> {user.email}
-                </ListGroup.Item>
-                <ListGroup.Item>
-                  <strong>Gender:</strong> {user.gender}
-                </ListGroup.Item>
-                <ListGroup.Item>
-                  <strong>Age:</strong> {user.age}
-                </ListGroup.Item>
-              </ListGroup>
-
-              <Button variant="primary" onClick={handleOpen}>
-                Edit Profile
-              </Button>
-            </Card.Body>
-          </Card>
+          <UserCard 
+            user={user} 
+            onEdit={(field) => setEditingField(field)} 
+          />
         </Col>
       </Row>
 
-      <ModalWindow
-        show={showModal}
-        onHide={() => setShowModal(false)}
-        title="Edit Data"
-        backdrop="static"
-        footer={
-          <>
-            <Button variant="primary" onClick={handleSave}>Save</Button>
-            <Button variant="secondary" onClick={() => setShowModal(false)}>
-              Close
-            </Button>
-          </>
-        }
-      >
-        <form>
-          <FormInput
-            label="Username"
-            type="text"
-            value={editForm.username}
-            onChange={(e) => handleChange("username", e.target.value)}
-          />
-
-          <FormInput
-            label="Email"
-            type="email"
-            value={editForm.email}
-            onChange={(e) => handleChange("email", e.target.value)}
-          />
-
-          <FormInput
-            label="Gender"
-            type="text"
-            value={editForm.gender}
-            onChange={(e) => handleChange("gender", e.target.value)}
-          />
-
-          <FormInput
-            label="Age"
-            type="number"
-            value={editForm.age}
-            onChange={(e) => handleChange("age", e.target.value)}
-          />
-        </form>
-      </ModalWindow>
+      <EditUserModal
+        fieldKey={editingField}
+        initialValue={editingField ? user[editingField] : ""}
+        config={editingField ? FIELD_CONFIG[editingField] : {}}
+        onSave={handleSave}
+        onClose={() => setEditingField(null)}
+      />
     </div>
   );
 };
