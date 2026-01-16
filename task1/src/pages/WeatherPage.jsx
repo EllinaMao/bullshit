@@ -1,9 +1,10 @@
-import { useContext } from "react";
+import { useContext,useEffect } from "react";
 import SearchForm from "../components/SearchForm";
 import WeatherResult from "../components/WeatherResult";
 import { useWeather } from "../hooks/useWeather";
 import Collapse from "react-bootstrap/Collapse";
 import { WeatherContext } from "../context/WeatherContext.jsx";
+import { toast } from "react-toastify";
 
 const WeatherPage = () => {
   const { location, isResultVisible } = useContext(WeatherContext);
@@ -13,6 +14,24 @@ const WeatherPage = () => {
     isLoading: isWeatherLoading,
     error: weatherError,
   } = useWeather(location?.lat, location?.lng);
+
+  useEffect(() => {
+    if (weatherError) {
+      toast.error(`Error fetching weather data: ${weatherError.message}`);
+    }
+  }, [weatherError]);
+
+  useEffect(() => {
+    if (weatherData && !isWeatherLoading) {
+      toast.success(`Weather data loaded for ${location?.name}`);
+    }
+  }, [weatherData, isWeatherLoading, location]);
+
+  useEffect(() => {
+    if (isWeatherLoading) {
+      toast.info("Loading weather data...", { autoClose: 1000 });
+    }
+  }, [isWeatherLoading]);
 
   return (
     <div className="container mt-5">

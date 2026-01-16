@@ -1,7 +1,7 @@
 import FormInput from "./FormInput";
 import Radio from "./Radio";
 import { useCity } from "../hooks/useCity";
-import { memo, useState, useContext } from "react";
+import { memo, useState, useContext} from "react";
 import { WeatherContext } from "../context/WeatherContext.jsx";
 import { toast } from "react-toastify";
 
@@ -20,62 +20,63 @@ const SearchForm = memo(() => {
     longitude: "",
   });
 
+  
   const {
-    data: cityData,
-    isFetching,
-    error: cityError,
-    refetch,
-  } = useCity(city, 1, "en", false);
-  const handleCityChange = (value) => {
-    setCity(value);
-    hideResult();
-  };
+      data: cityData,
+      isFetching,
+      error: cityError,
+      refetch,
+    } = useCity(city, 1, "en", false);
+    const handleCityChange = (value) => {
+        setCity(value);
+        hideResult();
+    };
+    
+    const handleLatChange = (value) => {
+        setCoordinates((prev) => ({ ...prev, latitude: value }));
+        hideResult();
+    };
+    
+    const handleLngChange = (value) => {
+        setCoordinates((prev) => ({ ...prev, longitude: value }));
+        hideResult();
+    };
+    
+    const handleModeChange = (value) => {
+        setMode(value);
+        hideResult();
+    };
+    
+    const handleCitySearch = async () => {
+        hideResult();
+        if (mode === "city") {
+            const result = await refetch();
+            const currentData = result.data;
+            
+            if (
+                currentData &&
+                currentData.results &&
+                currentData.results.length > 0
+            ) {
+                const { latitude, longitude } = currentData.results[0];
+                // toast.success(`Found location for city: ${city}, lat: ${latitude}, lng: ${longitude}`);
+                handleLocationFound({ lat: latitude, lng: longitude, name: city });
+            } else {
+                handleLocationFound(null);
+                toast.error(`No results found for city: ${city}`);
+            }
+        }
+    };
 
-  const handleLatChange = (value) => {
-    setCoordinates((prev) => ({ ...prev, latitude: value }));
-    hideResult();
-  };
-
-  const handleLngChange = (value) => {
-    setCoordinates((prev) => ({ ...prev, longitude: value }));
-    hideResult();
-  };
-
-  const handleModeChange = (value) => {
-    setMode(value);
-    hideResult();
-  };
-
-  const handleCitySearch = async () => {
-    hideResult();
-    if (mode === "city") {
-      const result = await refetch();
-      const currentData = result.data;
-
-      if (
-        currentData &&
-        currentData.results &&
-        currentData.results.length > 0
-      ) {
-        const { latitude, longitude } = currentData.results[0];
-        // toast.success(`Found location for city: ${city}, lat: ${latitude}, lng: ${longitude}`);
-        handleLocationFound({ lat: latitude, lng: longitude, name: city });
-      } else {
-        handleLocationFound(null);
-        toast.error(`No results found for city: ${city}`);
-      }
-    }
-  };
-
-  const handleCordSearch = async () => {
-    hideResult();
+    const handleCordSearch = async () => {
+        hideResult();
 
     if (coordinates.latitude && coordinates.longitude) {
       handleLocationFound({
         lat: parseFloat(coordinates.latitude),
         lng: parseFloat(coordinates.longitude),
         name: `coordinates: (${coordinates.latitude}, ${coordinates.longitude})`,
-    });
+      });
     } else {
       toast.error("Please enter both latitude and longitude.");
     }
@@ -122,7 +123,6 @@ const SearchForm = memo(() => {
       >
         Search
       </button>
-      <div className="mt-5 mb-3">{isFetching ? "Loading..." : ""}</div>
     </div>
   );
 });
