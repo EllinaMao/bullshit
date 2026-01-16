@@ -2,7 +2,7 @@ import { BASE_GEO } from "../API/API";
 import { useQuery } from "@tanstack/react-query";
 import { fetchData } from "../utils/fetchData";
 
-const useCity = (city, count = 1, language = 'en') => {
+const useCity = (city, count = 1, language = 'en', enabled = true) => {
     const res = useQuery({
         queryKey: ['city', city, count, language],
 
@@ -11,8 +11,9 @@ const useCity = (city, count = 1, language = 'en') => {
             count: count,
             language: language,
             format: 'json',
+            
         }),
-        enabled: city != null && city.trim() !== '',
+        enabled: enabled && city != null && city.trim() !== '',
         staleTime: 1000 * 60 * 5,
 
         retry: 1,

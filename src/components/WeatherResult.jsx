@@ -15,7 +15,7 @@ const WeatherResult = React.memo(({ weatherData, cityName }) => {
     return (
         <Accordion defaultActiveKey="0" className={`${isDay ? 'day-weather' : 'night-weather'} container`}>
             <Accordion.Item eventKey="0">
-                <Accordion.Header>Current Weather {cityName}</Accordion.Header>
+                <Accordion.Header className=''>Current Weather: {cityName}</Accordion.Header>
                 <Accordion.Body>
                     <p>Temperature: {temperature}°C</p>
                     <p>Windspeed: {windspeed} km/h</p>

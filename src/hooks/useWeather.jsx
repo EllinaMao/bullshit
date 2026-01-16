@@ -2,7 +2,7 @@
 import { fetchData } from "../utils/fetchData";
 import { BASE_WEATHER } from "../API/API";
 
-const useWeather = (latitude, longitude) => {
+const useWeather = (latitude, longitude, enabled = true) => {
     return useQuery({
         queryKey: ['weather', latitude, longitude],
         queryFn: () => fetchData(BASE_WEATHER, 'forecast', {
@@ -10,7 +10,7 @@ const useWeather = (latitude, longitude) => {
             longitude: longitude,
             current_weather: true,
         }),
-        enabled: latitude != null && longitude != null,
+        enabled: enabled && latitude != null && longitude != null,
     });
 };
 
