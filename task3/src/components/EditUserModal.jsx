@@ -3,6 +3,7 @@ import { Button } from "react-bootstrap";
 import { ModalWindow } from "./ModalWindow"; //
 import FormInput from "./FormInput";       //
 
+
 export const EditUserModal = ({ 
   fieldKey, 
   initialValue, 
@@ -10,10 +11,10 @@ export const EditUserModal = ({
   onSave, 
   onClose 
 }) => {
-  const [inputValue, setInputValue] = useState(initialValue);
+  const [inputValue, setInputValue] = useState(initialValue || "");
 
   useEffect(() => {
-    setInputValue(initialValue);
+    setInputValue(initialValue || "");
   }, [initialValue, fieldKey]);
 
   const handleSubmit = (e) => {
