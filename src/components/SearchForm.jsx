@@ -2,7 +2,6 @@ import FormInput from "./FormInput";
 import Radio from "./Radio";
 import { useCity } from "../hooks/useCity";
 import { memo, useState } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
 
 const SEARCH_OPTIONS = [
     { label: 'By City', value: 'city' },
@@ -95,7 +94,7 @@ const SearchForm = memo(({
                     />
                 </>
             )}
-            <button className="btn btn-primary mb-3" onClick={mode === 'city' ? handleCitySearch : handleCordSearch} disabled={isFetching}>
+            <button className="btn btn-primary mb-3 mx-auto d-block" onClick={mode === 'city' ? handleCitySearch : handleCordSearch} disabled={isFetching}>
                 Search
             </button>
             <div className="mt-5 mb-3">{isFetching ? 'Loading...' : ''}</div>

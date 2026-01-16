@@ -1,23 +1,32 @@
 import React from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
+import ToggleButton from 'react-bootstrap/ToggleButton';
+import ToggleButtonGroup from 'react-bootstrap/ToggleButtonGroup';
 
 const Radio = React.memo(({ options, currentValue, onChange }) => {
-    // console.log("Rendering Radio 🚨");
     return (
-        <div className="container">
-            {options.map((option) => (
-                <label key={option.value} className="form-check form-check-inline me-3">
-                    <input
+        <div className="mb-3 d-flex justify-content-center">
+            <ToggleButtonGroup 
+                type="radio" 
+                name="search-mode" 
+                value={currentValue} 
+                onChange={onChange}
+            >
+                {options.map((option, idx) => (
+                    <ToggleButton
+                        key={option.value}
+                        id={`radio-${idx}`}
                         type="radio"
+                        variant="outline-primary"
+                        name="radio"
                         value={option.value}
                         checked={currentValue === option.value}
-                        onChange={() => onChange(option.value)}
-                        className="form-check-input"
-                    />
-                    {option.label}
-                </label>
-            ))}
+                    >
+                        {option.label}
+                    </ToggleButton>
+                ))}
+            </ToggleButtonGroup>
         </div>
     );
 });
+
 export default Radio;

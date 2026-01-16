@@ -1,5 +1,4 @@
 import React from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
 
 const FormInput = React.memo(({ value, onChange, ...props }) => {
     // console.log("Rendering FormInput 🚇");

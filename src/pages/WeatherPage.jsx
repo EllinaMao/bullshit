@@ -27,7 +27,7 @@ const WeatherPage = () => {
 
     return (
         <div className="container mt-5">
-            <h1>Weather App</h1>
+            <h1 className="text-center">Weather App</h1>
             <SearchForm
                 onLocationFound={handleLocationFound}
                 onInputChange={handleInputChange}
