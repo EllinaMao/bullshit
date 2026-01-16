@@ -2,6 +2,7 @@ import { useState, useCallback } from "react";
 import SearchForm from "../components/SearchForm";
 import WeatherResult from "../components/WeatherResult";
 import { useWeather } from "../hooks/useWeather";
+import Collapse from 'react-bootstrap/Collapse';
 
 const WeatherPage = () => {
     const [targetLocation, setTargetLocation] = useState(null);
@@ -25,7 +26,7 @@ const WeatherPage = () => {
     }, []);
 
     return (
-        <div>
+        <div className="container mt-5">
             <h1>Weather App</h1>
             <SearchForm
                 onLocationFound={handleLocationFound}
@@ -35,12 +36,14 @@ const WeatherPage = () => {
 
             {weatherError && <p style={{ color: 'red' }}>Error: {weatherError.message}</p>}
 
-            {isResultVisible && (
-                <WeatherResult
-                    weatherData={weatherData}
-                    cityName={displayName}
-                />
-            )}
+            <Collapse in={isResultVisible}>
+                <div className="mt-4">
+                    <WeatherResult
+                        weatherData={weatherData}
+                        cityName={displayName}
+                    />
+                </div>
+            </Collapse>
         </div>
     );
 };

@@ -1,7 +1,8 @@
 import FormInput from "./FormInput";
 import Radio from "./Radio";
 import { useCity } from "../hooks/useCity";
-import { memo, useState, useEffect } from "react";
+import { memo, useState } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 const SEARCH_OPTIONS = [
     { label: 'By City', value: 'city' },
@@ -66,8 +67,8 @@ const SearchForm = memo(({
     }
 
     return (
-        <div>
-            <Radio options={SEARCH_OPTIONS} currentValue={mode} onChange={handleModeChange}></Radio>
+        <div className="container mt-5">
+            <Radio options={SEARCH_OPTIONS} currentValue={mode} onChange={handleModeChange} className="mb-3"></Radio>
             {mode === 'city' ? (
                 <FormInput
                     type="text"
@@ -94,10 +95,10 @@ const SearchForm = memo(({
                     />
                 </>
             )}
-            <button onClick={mode === 'city' ? handleCitySearch : handleCordSearch} disabled={isFetching}>
+            <button className="btn btn-primary mb-3" onClick={mode === 'city' ? handleCitySearch : handleCordSearch} disabled={isFetching}>
                 Search
             </button>
-            <p>{isFetching ? 'Loading...' : ''}</p>
+            <div className="mt-5 mb-3">{isFetching ? 'Loading...' : ''}</div>
         </div>
 
     );
