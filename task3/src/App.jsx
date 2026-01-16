@@ -1,12 +1,12 @@
-import './App.css'
-import UserProfile from './components/UserProfile.jsx'
+import "./App.css";
+import UserProfile from "./components/UserProfile.jsx";
+
 function App() {
   return (
     <>
-    <UserProfile />
+      <UserProfile />
     </>
   );
 }
 
-
-export default App
+export default App;

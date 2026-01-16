@@ -5,13 +5,7 @@ import { EditUserModal } from "./EditUserModal";
 import { toast } from "react-toastify";
 import { useContext } from "react";
 import { UserContext } from "../context/UserContext";
-
-const FIELD_CONFIG = {
-  username: { label: "Username", type: "text" },
-  email: { label: "Email", type: "email" },
-  gender: { label: "Gender", type: "text" },
-  age: { label: "Age", type: "number" },
-};
+import { FIELD_CONFIG } from "../features/userFields/FIELD_CONFIG";
 
 const UserProfile = () => {
   const {user, setUser} = useContext(UserContext);
@@ -29,8 +23,12 @@ const UserProfile = () => {
     }
     if (fieldKey === "age") {
       const ageValue = Number(newValue);
-      if (isNaN(ageValue) || ageValue <= 0) {
+      if (isNaN(ageValue) || ageValue <= 0 ) {
         toast.error("Age must be a positive number.");
+        return;
+      }
+      if (newValue >= 120) {
+        toast.error("Please enter a valid age.");
         return;
       }
     }
