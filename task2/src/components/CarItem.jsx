@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { mutate } from "swr";
-import { API_BASE_URL } from "../Api/Api.jsx";
+import { API_BASE_URL } from "../../../task3/src/Api/Api.jsx";
 
 export default function CarItem({ car }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -11,7 +11,7 @@ export default function CarItem({ car }) {
   const handleDelete = async () => {
     if (
       !window.confirm(
-        `Are you sure you want to delete this ${car.model} (ID: ${car.id})?`
+        `Are you sure you want to delete this ${car.model} (ID: ${car.id})?`,
       )
     )
       return;
@@ -112,16 +112,20 @@ export default function CarItem({ car }) {
         alignItems: "center",
       }}
     >
-      <img
-        src={car.imageUrl}
-        alt={car.model}
-        style={{
-          width: "50px",
-          height: "50px",
-          objectFit: "cover",
-          marginRight: "10px",
-        }}
-      />
+      {car.imageUrl ? (
+        <img
+          src={car.imageUrl || "https://placehold.co/150?text=Car"}
+          alt={car.model}
+          style={{
+            width: "50px",
+            height: "50px",
+            objectFit: "cover",
+            marginRight: "10px",
+          }}
+          onError={(e) => (e.target.src = "https://placehold.co/150?text=Car")}  
+        />
+      ) : null}
+
       <div style={{ flexGrow: 1 }}>
         **{car.model}** ({car.year}, {car.color}) - **{car.price} $**
       </div>
